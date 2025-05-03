@@ -13,10 +13,10 @@ build-type:     Simple
 library
   exposed-modules:
       Telegram.Bot.DSL
+      Telegram.Bot.DSL.TaggedContext
+      Telegram.Bot.DSL.Message
   other-modules:
       Telegram.Bot.DSL.FirstClassFamilies
-      Telegram.Bot.DSL.Message
-      Telegram.Bot.DSL.TaggedContext
       Paths_telegram_bot_message_dsl
   hs-source-dirs:
       src

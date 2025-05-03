@@ -4,6 +4,8 @@ library:
   source-dirs: src
   exposed-modules:
   - Telegram.Bot.DSL
+  - Telegram.Bot.DSL.TaggedContext
+  - Telegram.Bot.DSL.Message
 
   dependencies:
   - base
