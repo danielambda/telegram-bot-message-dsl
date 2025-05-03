@@ -14,7 +14,7 @@
 {-# LANGUAGE DerivingVia #-}
 
 module Telegram.Bot.DSL
-  ( ProperMessageKind(..), Message(..)
+  ( ProperMessageKind(..), MessageKind(..)
   , Proper, Proper'
   , IsMessage(..)
   , TextEntity(..)
