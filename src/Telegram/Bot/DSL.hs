@@ -363,9 +363,3 @@ type family RecordFields' a where
   RecordFields' (M1 C (MetaCons consName _ _) x)   = RecordFields' x
   RecordFields' (x :*: y) = RecordFields' x ++ RecordFields' y
   RecordFields' _ = '[]
-
--- type TypeFields fields a = TypeFields' fields (Rep a)
--- type TypeFields' :: [Symbol] -> (Type -> Type) -> [(Symbol, Type)]
--- type family TypeFields' fields a where
---   TypeFields' '[]      _ = '[]
---   TypeFields' (x : xs) a = '(x, TODO) : TypeFields' xs a
