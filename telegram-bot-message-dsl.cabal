@@ -16,13 +16,14 @@ library
       Telegram.Bot.DSL.TaggedContext
       Telegram.Bot.DSL.Message
   other-modules:
-      Telegram.Bot.DSL.FirstClassFamilies
+      Telegram.Bot.DSL.Parsing
       Paths_telegram_bot_message_dsl
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base
+    , defun-core
     , tagged
     , telegram-bot-api
     , text

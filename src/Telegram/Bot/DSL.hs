@@ -45,12 +45,15 @@ import GHC.Base (Symbol)
 import GHC.TypeLits (KnownSymbol, symbolVal, TypeError, ErrorMessage(..))
 
 import Telegram.Bot.DSL.Message (Message(..), textMessage)
-import Telegram.Bot.DSL.TaggedContext (TaggedContext (..), TaggedContextHasEntry (..), appendTaggedContext, Tagged (..))
-import Telegram.Bot.DSL.FirstClassFamilies (Exp, Eval, Map, type (++), type (==))
+import Telegram.Bot.DSL.TaggedContext
+  (TaggedContext (..), TaggedContextHasEntry (..), appendTaggedContext, Tagged (..), type (++))
+import Data.Type.Equality (type (==))
 import Text.Read (readMaybe)
 import GHC.Generics (Generic(..), U1(..), K1, M1, type (:*:), D, C, S, Meta(..))
 
 import GHC.Records (HasField(..))
+import DeFun.List (Map, MapSym1)
+import DeFun.Core (type (@@), type (~>), App)
 
 callbackButton :: T.Text -> T.Text -> InlineKeyboardButton
 callbackButton label callback = (labeledInlineKeyboardButton label)
@@ -135,16 +138,16 @@ type Proper x = Proper' (AsMessage x)
 type Proper' :: MessageKind -> ProperMessageKind
 type family Proper' msg where
   Proper' (Msg (tl:tls) bls) = PMsg
-    (Eval (ProperTL tl) :| Eval (Map ProperTL tls))
-    (Eval (Map ProperBL bls))
+    (ProperTL @@ tl :| Map ProperTL tls)
+    (MapSym1 ProperBL @@ bls)
   Proper' (Msg '[] _) = TypeError (Text "Cannot have a message without text")
 
-data ProperTL :: [TextEntity] -> Exp [TextEntity]
-type instance Eval (ProperTL '[]) = TypeError (Text "Cannot have empty text line")
-type instance Eval (ProperTL (tl:tls)) = tl:tls
+data ProperTL :: [TextEntity] ~> [TextEntity]
+type instance App ProperTL '[] = TypeError (Text "Cannot have empty text line")
+type instance App ProperTL (tl:tls) = tl:tls
 
-data ProperBL :: [ButtonEntity] -> Exp [ButtonEntity]
-type instance Eval (ProperBL a) = a
+data ProperBL :: [ButtonEntity] ~> [ButtonEntity]
+type instance App ProperBL a = a
 
 renderMessage :: forall k {msg :: k} ctx. IsMessage (Proper msg) ctx
               => Proxy msg -> TaggedContext ctx -> Message
@@ -154,18 +157,18 @@ type RenameTag :: Symbol -> Symbol -> MessageKind -> MessageKind
 type family RenameTag x y msg where
   RenameTag x x msg = msg
   RenameTag x y (Msg tls bls) = Msg
-    (Eval (Map (RenameTLTag x y) tls))
-    (Eval (Map (RenameBLTag x y) bls))
+    (MapSym1 (RenameTLTag x y) @@ tls)
+    (MapSym1 (RenameBLTag x y) @@ bls)
 
-type RenameTLTag x y = Map (RenameTextEntityTag x y)
-data RenameTextEntityTag :: Symbol -> Symbol -> TextEntity -> Exp TextEntity
-type instance Eval (RenameTextEntityTag x y (Var a)) = If (x == a) (Var y) (Var a)
-type instance Eval (RenameTextEntityTag _ _ (Txt a)) = Txt a
+type RenameTLTag x y = MapSym1 (RenameTextEntityTag x y)
+data RenameTextEntityTag :: Symbol -> Symbol -> TextEntity ~> TextEntity
+type instance App (RenameTextEntityTag x y) (Var a) = If (x == a) (Var y) (Var a)
+type instance App (RenameTextEntityTag _ _) (Txt a) = Txt a
 
-type RenameBLTag x y = Map (RenameButtonTag x y)
-data RenameButtonTag :: Symbol -> Symbol -> ButtonEntity -> Exp ButtonEntity
-type instance Eval (RenameButtonTag x y (CallbackBtn' a b c)) =
-  CallbackBtn' (Eval (RenameTLTag x y a)) b c
+type RenameBLTag x y = MapSym1 (RenameButtonTag x y)
+data RenameButtonTag :: Symbol -> Symbol -> ButtonEntity ~> ButtonEntity
+type instance App (RenameButtonTag x y) (CallbackBtn' a b c) =
+  CallbackBtn' (RenameTLTag x y @@ a) b c
 
 type IsMessage :: ProperMessageKind -> [(Symbol, Type)] -> Constraint
 class IsMessage a ctx where

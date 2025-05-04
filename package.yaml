@@ -12,6 +12,7 @@ library:
   - telegram-bot-api
   - tagged
   - text
+  - defun-core
 
 ghc-options:
 - -Wall

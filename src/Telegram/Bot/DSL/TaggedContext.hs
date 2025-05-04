@@ -13,6 +13,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE PolyKinds #-}
 
 module Telegram.Bot.DSL.TaggedContext
   ( TaggedContext (..)
@@ -29,8 +30,6 @@ import Data.Kind (Type, Constraint)
 import Data.Proxy (Proxy (..))
 import GHC.TypeLits (Symbol)
 import Unsafe.Coerce (unsafeCoerce)
-
-import Telegram.Bot.DSL.FirstClassFamilies (type (++))
 
 type TaggedContext :: [(Symbol, Type)] -> Type
 data TaggedContext as where
@@ -57,6 +56,12 @@ let' a ctx = Tagged a :. ctx
 
 andLet :: forall s a. a -> TaggedContext '[ '(s, a)]
 andLet a = Tagged a :. EmptyTaggedContext
+
+infixr 5 ++
+type (++) :: [k] -> [k] -> [k]
+type family as ++ bs where
+  '[]      ++ bs = bs
+  (a : as) ++ bs = a : (as ++ bs)
 
 infixr 5 .++
 (.++) :: TaggedContext a -> TaggedContext b -> TaggedContext (a ++ b)
