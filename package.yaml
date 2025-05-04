@@ -17,18 +17,19 @@ library:
   language: GHC2021
 
   default-extensions:
-  - TypeOperators
-  - TypeApplications
-  - StandaloneKindSignatures
-  - FunctionalDependencies
-  - NoStarIsType
-  - DerivingVia
-  - DerivingStrategies
-  - GADTs
-  - DefaultSignatures
-  - TypeFamilies
+  - ConstraintKinds
   - DataKinds
+  - DefaultSignatures
+  - DerivingStrategies
+  - DerivingVia
+  - FunctionalDependencies
+  - GADTs
+  - NoStarIsType
   - PolyKinds
+  - StandaloneKindSignatures
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
 
 ghc-options:
 - -Wall

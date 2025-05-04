@@ -16,23 +16,33 @@ library
       Telegram.Bot.DSL.TaggedContext
       Telegram.Bot.DSL.Message
   other-modules:
+      Telegram.Bot.DSL.Classes.HasTaggedContext
+      Telegram.Bot.DSL.Classes.IsCallbackData
+      Telegram.Bot.DSL.Classes.IsUnit
+      Telegram.Bot.DSL.Components.Button
+      Telegram.Bot.DSL.Components.ButtonLine
+      Telegram.Bot.DSL.Components.Message
+      Telegram.Bot.DSL.Components.MessageLine
+      Telegram.Bot.DSL.Components.TextLine
       Telegram.Bot.DSL.Parsing
+      Telegram.Bot.DSL.Utils.RenameTag
       Paths_telegram_bot_message_dsl
   hs-source-dirs:
       src
   default-extensions:
-      TypeOperators
-      TypeApplications
-      StandaloneKindSignatures
-      FunctionalDependencies
-      NoStarIsType
-      DerivingVia
-      DerivingStrategies
-      GADTs
-      DefaultSignatures
-      TypeFamilies
+      ConstraintKinds
       DataKinds
+      DefaultSignatures
+      DerivingStrategies
+      DerivingVia
+      FunctionalDependencies
+      GADTs
+      NoStarIsType
       PolyKinds
+      StandaloneKindSignatures
+      TypeApplications
+      TypeFamilies
+      TypeOperators
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base
