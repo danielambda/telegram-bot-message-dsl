@@ -1,6 +1,6 @@
 {-# LANGUAGE UndecidableInstances #-}
 
-module Telegram.Bot.DSL.Components.TextLine (TextEntity(..) , IsTextLine(..)) where
+module Telegram.Bot.DSL.Components.TextLine (TextEntity(..) , IsTextLine(..), FmtKind(..)) where
 
 import qualified Data.Text as T (Text, pack)
 
@@ -10,6 +10,8 @@ import GHC.Base (Symbol)
 import GHC.TypeLits (KnownSymbol, symbolVal)
 
 import Telegram.Bot.DSL.TaggedContext (TaggedContext (..), TaggedContextHasEntry (..))
+
+newtype FmtKind = F Symbol
 
 data TextEntity
   = Txt Symbol
@@ -42,6 +44,13 @@ instance (IsTextLine (l : ls) ctx, TaggedContextHasEntry ctx a T.Text)
       => IsTextLine (Var a : l : ls) ctx where
   getTextLine _ = do
     var <- getTaggedContextEntry (Proxy @a)
+    textLine <- getTextLine (Proxy @(l:ls))
+    return $ var <> textLine
+
+instance (IsTextLine (l : ls) ctx, TaggedContextHasEntry ctx a show, Show show)
+      => IsTextLine (VarShow a : l : ls) ctx where
+  getTextLine _ = do
+    var <- T.pack . show <$> getTaggedContextEntry (Proxy @a)
     textLine <- getTextLine (Proxy @(l:ls))
     return $ var <> textLine
 

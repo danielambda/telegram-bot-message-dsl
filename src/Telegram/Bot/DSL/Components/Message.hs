@@ -22,9 +22,10 @@ import GHC.TypeLits (Symbol)
 import Telegram.Bot.DSL.Components.Button (ButtonEntity(..))
 import Telegram.Bot.DSL.Components.ButtonLine (IsButtonLine (..))
 import Telegram.Bot.DSL.Components.MessageLine (MessageLine(..))
-import Telegram.Bot.DSL.Components.TextLine (TextEntity(..), IsTextLine (..))
+import Telegram.Bot.DSL.Components.TextLine (TextEntity(..), IsTextLine (..), FmtKind(..))
 import Telegram.Bot.DSL.Message (Message (..), textMessage)
 import Telegram.Bot.DSL.TaggedContext (type (++), TaggedContext)
+import Telegram.Bot.DSL.Utils.ParseFmtTextLine (ParseFmtTextLine)
 
 data ProperTL :: [TextEntity] ~> [TextEntity]
 type instance App ProperTL '[] = TypeError (Text "Cannot have empty text line")
@@ -53,6 +54,7 @@ type a :\ b = JoinMessages (AsMessage a) (AsMessage b)
 type AsMessage :: k -> MessageKind
 type family AsMessage a where
   AsMessage (a :: MessageKind)  = a
+  AsMessage (F a)               = Msg '[ ParseFmtTextLine a] '[]
   AsMessage (a :: Symbol)       = Msg '[ '[Txt a]] '[]
   AsMessage (a :: TextEntity)   = Msg '[ '[a]]     '[]
   AsMessage (a :: ButtonEntity) = Msg '[]          '[ '[a]]

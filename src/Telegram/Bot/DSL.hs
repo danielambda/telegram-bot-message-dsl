@@ -26,6 +26,7 @@ import Telegram.Bot.DSL.Components.MessageLine
 import Telegram.Bot.DSL.Components.TextLine
 import Telegram.Bot.DSL.Message
 import Telegram.Bot.DSL.TaggedContext
+import Telegram.Bot.DSL.Utils.ParseFmtTextLine (ParseFmtTextLine)
 
 renderMessage :: forall k {msg :: k} ctx. IsMessage (Proper msg) ctx
               => Proxy msg -> TaggedContext ctx -> Message
@@ -38,6 +39,7 @@ type CallbackButtons a = CallbackButtons' (AsTextLine a)
 type AsTextLine :: k -> [TextEntity]
 type family AsTextLine a where
   AsTextLine (MTL a) = a
+  AsTextLine (F a) = ParseFmtTextLine a
   AsTextLine (a :: [TextEntity]) = a
   AsTextLine (a :: TextEntity)   = '[a]
   AsTextLine (a :: Symbol)       = '[Txt a]

@@ -1,3 +1,5 @@
+{-# LANGUAGE UndecidableInstances #-}
+
 module Telegram.Bot.DSL.Components.MessageLine
   ( MessageLine(..)
   , (:|:)
@@ -5,10 +7,11 @@ module Telegram.Bot.DSL.Components.MessageLine
   ) where
 
 import Telegram.Bot.DSL.Components.Button (ButtonEntity(..))
-import Telegram.Bot.DSL.Components.TextLine (TextEntity(..))
+import Telegram.Bot.DSL.Components.TextLine (TextEntity(..), FmtKind(..))
 import GHC.TypeLits (Symbol)
 import GHC.TypeError (TypeError, ErrorMessage(..))
 import Telegram.Bot.DSL.TaggedContext (type (++))
+import Telegram.Bot.DSL.Utils.ParseFmtTextLine (ParseFmtTextLine)
 
 data MessageLine
   = MTL [TextEntity]
@@ -20,6 +23,7 @@ type a :|: b = JoinMessageLines (AsMessageLine a) (AsMessageLine b)
 
 type AsMessageLine :: k -> MessageLine
 type family AsMessageLine a where
+  AsMessageLine (F a) = MTL (ParseFmtTextLine a)
   AsMessageLine (MTL a) = MTL a
   AsMessageLine (MBL a) = MBL a
   AsMessageLine (a :: Symbol) = MTL '[Txt a]

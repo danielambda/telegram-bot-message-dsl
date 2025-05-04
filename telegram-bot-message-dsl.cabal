@@ -25,6 +25,7 @@ library
       Telegram.Bot.DSL.Components.MessageLine
       Telegram.Bot.DSL.Components.TextLine
       Telegram.Bot.DSL.Parsing
+      Telegram.Bot.DSL.Utils.ParseFmtTextLine
       Telegram.Bot.DSL.Utils.RenameTag
       Paths_telegram_bot_message_dsl
   hs-source-dirs:
@@ -43,7 +44,7 @@ library
       TypeApplications
       TypeFamilies
       TypeOperators
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  ghc-options: -freduction-depth=0 -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base
     , defun-core

@@ -1,19 +1,32 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module Telegram.Bot.DSL.Parsing
-  ( MainParser
+  ( GetParseResult
+  , InterpolatedParser
+  , InterpolatedPart(..)
+  , ParseError(..)
+  , Input(..)
   , RunInput
   , Run
   , Trim
+  , Words
   ) where
 
 import DeFun.Core (type (@@), App, type (~>), Con1)
-import GHC.TypeLits
-  (Symbol, Nat, UnconsSymbol, AppendSymbol, ConsSymbol, type (+))
-import Data.Type.Bool (If, type (&&))
-import Data.Type.Equality (type (==))
 import DeFun.Bool (Not)
 import DeFun.Function (ConstSym, ConstSym1, IdSym)
+
+import GHC.TypeLits (Symbol, Nat, UnconsSymbol, AppendSymbol, ConsSymbol, type (+))
+import GHC.TypeError (TypeError, ErrorMessage(..))
+import qualified GHC.TypeError as E (ErrorMessage((:<>:)))
+import Data.Type.Bool (If, type (&&))
+import Data.Type.Equality (type (==))
+
+type GetParseResult :: Either ParseError (Input, a) -> a
+type family GetParseResult a where
+  GetParseResult ('Left ('ParseError i s)) =
+    TypeError (Text "Error at location '" E.:<>: ShowType i E.:<>: Text "': " E.:<>: Text s)
+  GetParseResult ('Right '(_, a)) = a
 
 type a :<>: b = AppendSymbol a b
 
@@ -21,9 +34,9 @@ data InterpolatedPart
   = OutBrackets Symbol
   | InBrackets Symbol
 
-type MainParser = 'Parser MainParser'
-data MainParser' :: Input ~> Either ParseError (Input, [InterpolatedPart])
-type instance App MainParser' inp = FailIfInputRemaining
+type InterpolatedParser = 'Parser InterpolatedParser'
+data InterpolatedParser' :: Input ~> Either ParseError (Input, [InterpolatedPart])
+type instance App InterpolatedParser' inp = FailIfInputRemaining
   (RunInput (Many FSymbolEntryRawP) inp)
 
 type family FailIfInputRemaining p where
