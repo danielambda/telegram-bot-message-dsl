@@ -14,6 +14,22 @@ library:
   - text
   - defun-core
 
+  language: GHC2021
+
+  default-extensions:
+  - TypeOperators
+  - TypeApplications
+  - StandaloneKindSignatures
+  - FunctionalDependencies
+  - NoStarIsType
+  - DerivingVia
+  - DerivingStrategies
+  - GADTs
+  - DefaultSignatures
+  - TypeFamilies
+  - DataKinds
+  - PolyKinds
+
 ghc-options:
 - -Wall
 - -Wcompat
