@@ -1,35 +1,21 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module Telegram.Bot.DSL.Components.MessageLine
-  ( MessageLine(..)
-  , (:|:)
-  , AsMessageLine
+  ( MessageLine(..), MTL, MBL
+  , JoinMessageLines
   ) where
 
 import Telegram.Bot.DSL.Components.Button (ButtonEntity(..))
-import Telegram.Bot.DSL.Components.TextLine (TextEntity(..), FmtKind(..))
-import GHC.TypeLits (Symbol)
+import Telegram.Bot.DSL.Components.TextLine (TextEntity(..))
 import GHC.TypeError (TypeError, ErrorMessage(..))
 import Telegram.Bot.DSL.TaggedContext (type (++))
-import Telegram.Bot.DSL.Utils.ParseFmtTextLine (ParseFmtTextLine)
 
 data MessageLine
-  = MTL [TextEntity]
-  | MBL [ButtonEntity]
+  = MkMTL [TextEntity]
+  | MkMBL [ButtonEntity]
 
-infixr 9 :|:
-type (:|:) :: k -> l -> MessageLine
-type a :|: b = JoinMessageLines (AsMessageLine a) (AsMessageLine b)
-
-type AsMessageLine :: k -> MessageLine
-type family AsMessageLine a where
-  AsMessageLine (F a) = MTL (ParseFmtTextLine a)
-  AsMessageLine (MTL a) = MTL a
-  AsMessageLine (MBL a) = MBL a
-  AsMessageLine (a :: Symbol) = MTL '[Txt a]
-  AsMessageLine (a :: TextEntity) = MTL '[a]
-  AsMessageLine (a :: ButtonEntity) = MBL '[a]
-  AsMessageLine a = TypeError (Text "Cannot convert " :<>: ShowType a :<>: Text " to MessageLine")
+type MTL = 'MkMTL
+type MBL = 'MkMBL
 
 type JoinMessageLines :: MessageLine -> MessageLine -> MessageLine
 type family JoinMessageLines a b where

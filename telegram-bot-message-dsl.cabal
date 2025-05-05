@@ -21,10 +21,14 @@ library
       Telegram.Bot.DSL.Classes.IsUnit
       Telegram.Bot.DSL.Components.Button
       Telegram.Bot.DSL.Components.ButtonLine
+      Telegram.Bot.DSL.Components.FmtText
       Telegram.Bot.DSL.Components.Message
       Telegram.Bot.DSL.Components.MessageLine
       Telegram.Bot.DSL.Components.TextLine
+      Telegram.Bot.DSL.Conversions.AsMessageLine
+      Telegram.Bot.DSL.Conversions.AsTextLine
       Telegram.Bot.DSL.Parsing
+      Telegram.Bot.DSL.Utils.FromEitherError
       Telegram.Bot.DSL.Utils.ParseFmtTextLine
       Telegram.Bot.DSL.Utils.RenameTag
       Paths_telegram_bot_message_dsl

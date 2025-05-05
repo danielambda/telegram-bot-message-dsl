@@ -8,6 +8,9 @@ class IsUnit u where
   default unitValue :: (Generic u, GIsUnit (Rep u)) => u
   unitValue = to gunitValue
 
+instance IsUnit () where
+  unitValue = ()
+
 class GIsUnit u where
   gunitValue :: u a
 

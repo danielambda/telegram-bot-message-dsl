@@ -1,6 +1,9 @@
 {-# LANGUAGE UndecidableInstances #-}
 
-module Telegram.Bot.DSL.Components.TextLine (TextEntity(..) , IsTextLine(..), FmtKind(..)) where
+module Telegram.Bot.DSL.Components.TextLine
+  ( TextEntity(..), Txt, Var, VarShow
+  , IsTextLine(..)
+  ) where
 
 import qualified Data.Text as T (Text, pack)
 
@@ -11,12 +14,14 @@ import GHC.TypeLits (KnownSymbol, symbolVal)
 
 import Telegram.Bot.DSL.TaggedContext (TaggedContext (..), TaggedContextHasEntry (..))
 
-newtype FmtKind = F Symbol
-
 data TextEntity
-  = Txt Symbol
-  | Var Symbol
-  | VarShow Symbol
+  = MkTxt Symbol
+  | MkVar Symbol
+  | MkVarShow Symbol
+
+type Txt = 'MkTxt
+type Var = 'MkVar
+type VarShow = 'MkVarShow
 
 type IsTextLine :: [TextEntity] -> [(Symbol, Type)] -> Constraint
 class IsTextLine a ctx where

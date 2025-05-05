@@ -1,0 +1,29 @@
+{-# LANGUAGE UndecidableInstances #-}
+
+module Telegram.Bot.DSL.Components.FmtText (ParseFmtTextLine, FmtTextLine(..), F) where
+
+import DeFun.Core (type (~>), App)
+import DeFun.List (Map)
+
+import GHC.TypeError (TypeError, ErrorMessage(..))
+import GHC.TypeLits (Symbol)
+
+import Telegram.Bot.DSL.Components.TextLine (TextEntity, Txt, Var, VarShow)
+import Telegram.Bot.DSL.Parsing (GetParseResult, Run, InterpolatedParser, InterpolatedPart(..), Words)
+
+newtype FmtTextLine = MkF Symbol
+type F = MkF
+
+type ParseFmtTextLine :: Symbol -> [TextEntity]
+type ParseFmtTextLine s = Map ParseFmtTextLine' (GetParseResult (Run InterpolatedParser s))
+
+data ParseFmtTextLine' :: InterpolatedPart ~> TextEntity
+type instance App ParseFmtTextLine' (OutBrackets s) = Txt s
+type instance App ParseFmtTextLine' (InBrackets s) = ParseInBrackets (Words s)
+
+type ParseInBrackets :: [Symbol] -> TextEntity
+type family ParseInBrackets words where
+  ParseInBrackets '[] = TypeError ('Text "Empty {} are not allowed")
+  ParseInBrackets '[single] = Var single
+  ParseInBrackets '["show", arg] = VarShow arg
+  ParseInBrackets a = TypeError ('Text "Unknown function " :<>: 'ShowType a)

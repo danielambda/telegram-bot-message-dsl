@@ -1,7 +1,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module Telegram.Bot.DSL.Components.Button
-  ( ButtonEntity(..)
+  ( ButtonEntity(..), CallbackBtn', UnitCallbackBtn', CallbackButtons'
   , IsButton(..)
   ) where
 
@@ -18,9 +18,13 @@ import Telegram.Bot.DSL.Classes.HasTaggedContext (HasTaggedContext (..))
 import Telegram.Bot.DSL.Classes.IsCallbackData (IsCallbackData(..))
 
 data ButtonEntity
-  = CallbackBtn' [TextEntity] Type Symbol
-  | UnitCallbackBtn' [TextEntity] Type
-  | CallbackButtons' [TextEntity] Type Symbol
+  = MkCallbackBtn' [TextEntity] Type Symbol
+  | MkUnitCallbackBtn' [TextEntity] Type
+  | MkCallbackButtons' [TextEntity] Type Symbol
+
+type CallbackBtn' = MkCallbackBtn'
+type UnitCallbackBtn' = MkUnitCallbackBtn'
+type CallbackButtons' = MkCallbackButtons'
 
 type IsButton :: ButtonEntity -> [(Symbol, Type)] -> Constraint
 class IsButton a ctx where

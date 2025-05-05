@@ -9,7 +9,7 @@ module Telegram.Bot.DSL.Components.Message
   ) where
 
 import DeFun.Core (type (@@), type (~>), App)
-import DeFun.List (Map, MapSym1)
+import DeFun.List (MapSym1)
 import qualified Data.Text as T (unlines)
 import Telegram.Bot.API (SomeReplyMarkup(..), InlineKeyboardMarkup (..))
 
@@ -19,20 +19,12 @@ import Data.Proxy (Proxy (..))
 import GHC.TypeError (TypeError, ErrorMessage(..))
 import GHC.TypeLits (Symbol)
 
-import Telegram.Bot.DSL.Components.Button (ButtonEntity(..))
-import Telegram.Bot.DSL.Components.ButtonLine (IsButtonLine (..))
-import Telegram.Bot.DSL.Components.MessageLine (MessageLine(..))
-import Telegram.Bot.DSL.Components.TextLine (TextEntity(..), IsTextLine (..), FmtKind(..))
+import Telegram.Bot.DSL.Components.Button (ButtonEntity)
+import Telegram.Bot.DSL.Components.ButtonLine (IsButtonLine(..))
+import Telegram.Bot.DSL.Components.MessageLine (MTL, MBL)
+import Telegram.Bot.DSL.Components.TextLine (TextEntity, IsTextLine(..), Txt)
 import Telegram.Bot.DSL.Message (Message (..), textMessage)
 import Telegram.Bot.DSL.TaggedContext (type (++), TaggedContext)
-import Telegram.Bot.DSL.Utils.ParseFmtTextLine (ParseFmtTextLine)
-
-data ProperTL :: [TextEntity] ~> [TextEntity]
-type instance App ProperTL '[] = TypeError (Text "Cannot have empty text line")
-type instance App ProperTL (tl:tls) = tl:tls
-
-data ProperBL :: [ButtonEntity] ~> [ButtonEntity]
-type instance App ProperBL a = a
 
 data ProperMessageKind = PMsg (NonEmpty [TextEntity]) [[ButtonEntity]]
 data MessageKind = Msg [[TextEntity]] [[ButtonEntity]]
@@ -42,10 +34,12 @@ type Proper x = Proper' (AsMessage x)
 
 type Proper' :: MessageKind -> ProperMessageKind
 type family Proper' msg where
-  Proper' (Msg (tl:tls) bls) = PMsg
-    (ProperTL @@ tl :| Map ProperTL tls)
+  Proper' (Msg (tl:tls) bls) = PMsg (tl :| tls)
     (MapSym1 ProperBL @@ bls)
   Proper' (Msg '[] _) = TypeError (Text "Cannot have a message without text")
+
+data ProperBL :: [ButtonEntity] ~> [ButtonEntity]
+type instance App ProperBL a = a
 
 infixl 0 :\
 type (:\) :: k -> l -> MessageKind
@@ -54,7 +48,6 @@ type a :\ b = JoinMessages (AsMessage a) (AsMessage b)
 type AsMessage :: k -> MessageKind
 type family AsMessage a where
   AsMessage (a :: MessageKind)  = a
-  AsMessage (F a)               = Msg '[ ParseFmtTextLine a] '[]
   AsMessage (a :: Symbol)       = Msg '[ '[Txt a]] '[]
   AsMessage (a :: TextEntity)   = Msg '[ '[a]]     '[]
   AsMessage (a :: ButtonEntity) = Msg '[]          '[ '[a]]
