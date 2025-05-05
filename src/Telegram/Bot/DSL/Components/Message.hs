@@ -5,7 +5,7 @@ module Telegram.Bot.DSL.Components.Message
   , MessageKind(..)
   , ProperMessageKind(..)
   , IsMessage(..)
-  , Proper
+  , Proper, Proper'
   ) where
 
 import DeFun.Core (type (@@), type (~>), App)
