@@ -9,10 +9,12 @@ import Telegram.Bot.DSL.Components.TextLine (TextEntity, Txt)
 import Telegram.Bot.DSL.Components.Button (ButtonEntity)
 import Telegram.Bot.DSL.Components.MessageLine (MTL, MBL)
 import Telegram.Bot.DSL.Components.Message (MessageKind, Msg)
+import Telegram.Bot.DSL.Components.FmtText (F, ParseFmtTextLine)
 
 type AsMessage :: k -> MessageKind
 type family AsMessage a where
   AsMessage (a :: MessageKind)  = a
+  AsMessage (F a)               = Msg '[ParseFmtTextLine a] '[]
   AsMessage (a :: Symbol)       = Msg '[ '[Txt a]] '[]
   AsMessage (a :: TextEntity)   = Msg '[ '[a]]     '[]
   AsMessage (a :: ButtonEntity) = Msg '[]          '[ '[a]]
