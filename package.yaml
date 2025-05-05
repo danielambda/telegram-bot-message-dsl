@@ -4,8 +4,22 @@ library:
   source-dirs: src
   exposed-modules:
   - Telegram.Bot.DSL
-  - Telegram.Bot.DSL.TaggedContext
+  - Telegram.Bot.DSL.Classes.HasTaggedContext
+  - Telegram.Bot.DSL.Classes.IsCallbackData
+  - Telegram.Bot.DSL.Classes.IsUnit
+  - Telegram.Bot.DSL.Components.Button
+  - Telegram.Bot.DSL.Components.ButtonLine
+  - Telegram.Bot.DSL.Components.FmtText
+  - Telegram.Bot.DSL.Components.Message
+  - Telegram.Bot.DSL.Components.MessageLine
+  - Telegram.Bot.DSL.Components.TextLine
+  - Telegram.Bot.DSL.Conversions.AsMessage
+  - Telegram.Bot.DSL.Conversions.AsMessageLine
+  - Telegram.Bot.DSL.Conversions.AsTextLine
   - Telegram.Bot.DSL.Message
+  - Telegram.Bot.DSL.Parsing
+  - Telegram.Bot.DSL.TaggedContext
+  - Telegram.Bot.DSL.Utils.RenameTag
 
   dependencies:
   - base

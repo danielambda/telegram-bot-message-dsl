@@ -1,11 +1,11 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module Telegram.Bot.DSL.Components.Message
-  ( (:\)
-  , MessageKind(..)
-  , ProperMessageKind(..)
+  ( MessageKind(..), Msg
+  , ProperMessageKind(..), PMsg
   , IsMessage(..)
-  , Proper, Proper'
+  , Proper'
+  , JoinMessages
   ) where
 
 import DeFun.Core (type (@@), type (~>), App)
@@ -21,16 +21,15 @@ import GHC.TypeLits (Symbol)
 
 import Telegram.Bot.DSL.Components.Button (ButtonEntity)
 import Telegram.Bot.DSL.Components.ButtonLine (IsButtonLine(..))
-import Telegram.Bot.DSL.Components.MessageLine (MTL, MBL)
-import Telegram.Bot.DSL.Components.TextLine (TextEntity, IsTextLine(..), Txt)
+import Telegram.Bot.DSL.Components.TextLine (TextEntity, IsTextLine(..))
 import Telegram.Bot.DSL.Message (Message (..), textMessage)
 import Telegram.Bot.DSL.TaggedContext (type (++), TaggedContext)
 
-data ProperMessageKind = PMsg (NonEmpty [TextEntity]) [[ButtonEntity]]
-data MessageKind = Msg [[TextEntity]] [[ButtonEntity]]
+data ProperMessageKind = MkPMsg (NonEmpty [TextEntity]) [[ButtonEntity]]
+data MessageKind = MkMsg [[TextEntity]] [[ButtonEntity]]
 
-type Proper :: k -> ProperMessageKind
-type Proper x = Proper' (AsMessage x)
+type Msg = MkMsg
+type PMsg = MkPMsg
 
 type Proper' :: MessageKind -> ProperMessageKind
 type family Proper' msg where
@@ -40,20 +39,6 @@ type family Proper' msg where
 
 data ProperBL :: [ButtonEntity] ~> [ButtonEntity]
 type instance App ProperBL a = a
-
-infixl 0 :\
-type (:\) :: k -> l -> MessageKind
-type a :\ b = JoinMessages (AsMessage a) (AsMessage b)
-
-type AsMessage :: k -> MessageKind
-type family AsMessage a where
-  AsMessage (a :: MessageKind)  = a
-  AsMessage (a :: Symbol)       = Msg '[ '[Txt a]] '[]
-  AsMessage (a :: TextEntity)   = Msg '[ '[a]]     '[]
-  AsMessage (a :: ButtonEntity) = Msg '[]          '[ '[a]]
-  AsMessage (MTL a)             = Msg '[a]         '[]
-  AsMessage (MBL a)             = Msg '[]          '[a]
-  AsMessage a = TypeError (Text "Cannot convert " :<>: ShowType a :<>: Text " to Message")
 
 type JoinMessages :: MessageKind -> MessageKind -> MessageKind
 type family JoinMessages m1 m2 where
