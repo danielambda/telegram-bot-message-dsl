@@ -1,8 +1,9 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module Telegram.Bot.DSL.Components.Button
-  ( ButtonEntity(..), CallbackBtn', UnitCallbackBtn', CallbackButtons'
+  ( ButtonEntity(..), CallbackBtn', UnitCallbackBtn', CallbackButtons', Btn, Buttons
   , IsButton(..)
+  , callbackButton
   ) where
 
 import Telegram.Bot.DSL.Components.TextLine (TextEntity, IsTextLine (..))
@@ -17,14 +18,22 @@ import Telegram.Bot.DSL.Classes.IsUnit (IsUnit (..))
 import Telegram.Bot.DSL.Classes.HasTaggedContext (HasTaggedContext (..))
 import Telegram.Bot.DSL.Classes.IsCallbackData (IsCallbackData(..))
 
+callbackButton :: IsCallbackData a => T.Text -> a -> InlineKeyboardButton
+callbackButton label callback = (labeledInlineKeyboardButton label)
+  {inlineKeyboardButtonCallbackData = Just (toCallbackData callback)}
+
 data ButtonEntity
   = MkCallbackBtn' [TextEntity] Type Symbol
   | MkUnitCallbackBtn' [TextEntity] Type
   | MkCallbackButtons' [TextEntity] Type Symbol
+  | MkBtn Symbol
+  | MkButtons Symbol
 
 type CallbackBtn' = MkCallbackBtn'
 type UnitCallbackBtn' = MkUnitCallbackBtn'
 type CallbackButtons' = MkCallbackButtons'
+type Btn = MkBtn
+type Buttons = MkButtons
 
 type IsButton :: ButtonEntity -> [(Symbol, Type)] -> Constraint
 class IsButton a ctx where
@@ -40,8 +49,7 @@ instance ( IsCallbackData a
     a <- getTaggedContextEntry (Proxy @s)
     let ctx0 = getTaggedContext a
     label <- getTextLine (Proxy @l) . appendTaggedContext ctx0
-    let callback = toCallbackData a
-    return [callbackButton label callback]
+    return [callbackButton label a]
 
 instance ( IsCallbackData t
          , IsUnit t
@@ -50,7 +58,7 @@ instance ( IsCallbackData t
       => IsButton (UnitCallbackBtn' tl t) ctx where
   getButton _ = do
     label <- getTextLine (Proxy @tl)
-    let callback = toCallbackData $ unitValue @t
+    let callback = unitValue @t
     return [callbackButton label callback]
 
 instance ( IsTextLine tl (ctx0 ++ ctx)
@@ -65,10 +73,13 @@ instance ( IsTextLine tl (ctx0 ++ ctx)
       f a = do
         let ctx0 = getTaggedContext a
         label <- getTextLine (Proxy @tl) . appendTaggedContext ctx0
-        let callback = toCallbackData a
-        return $ callbackButton label callback
+        return $ callbackButton label a
 
-callbackButton :: T.Text -> T.Text -> InlineKeyboardButton
-callbackButton label callback = (labeledInlineKeyboardButton label)
-  {inlineKeyboardButtonCallbackData = Just callback}
+instance TaggedContextHasEntry ctx s InlineKeyboardButton
+      => IsButton (Btn s) ctx where
+  getButton _ = (:[]) <$> getTaggedContextEntry (Proxy @s)
+
+instance TaggedContextHasEntry ctx s [InlineKeyboardButton]
+      => IsButton (Buttons s) ctx where
+  getButton _ = getTaggedContextEntry (Proxy @s)
 

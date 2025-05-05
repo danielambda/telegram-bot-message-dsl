@@ -29,7 +29,6 @@ library
       Telegram.Bot.DSL.Conversions.AsTextLine
       Telegram.Bot.DSL.Parsing
       Telegram.Bot.DSL.Utils.FromEitherError
-      Telegram.Bot.DSL.Utils.ParseFmtTextLine
       Telegram.Bot.DSL.Utils.RenameTag
       Paths_telegram_bot_message_dsl
   hs-source-dirs:
