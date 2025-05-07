@@ -3,8 +3,7 @@
 module Telegram.Bot.DSL.Classes.HasTaggedContext
   ( HasTaggedContext(..)
   , HasFields(..)
-  , TypedFields(..)
-  , Fields(..)
+  , RecordFields
   ) where
 
 import Telegram.Bot.DSL.TaggedContext (TaggedContext (..), type (++), Tagged (..))
@@ -33,12 +32,6 @@ instance {-# OVERLAPS #-}
          (HasField name a ty, HasFields fields a)
       => HasFields ('(name, ty) : fields) a where
   getFields a = Tagged @name (getField @name a) :. getFields a
-
-type TypedFields :: [(Symbol, Type)] -> Type -> Type
-newtype TypedFields fields a = TypedFields a
-
-type Fields :: [Symbol] -> Type -> Type
-newtype Fields fields a = Fields a
 
 type RecordFields a = RecordFields' (Rep a)
 type RecordFields' :: (Type -> Type) -> [(Symbol, Type)]
