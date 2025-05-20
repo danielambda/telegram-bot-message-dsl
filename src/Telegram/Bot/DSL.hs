@@ -2,42 +2,27 @@ module Telegram.Bot.DSL
   ( CallbackBtn, CallbackButtons, UnitCallbackBtn
   , (:|:), (:\), Proper
   , renderMessage
-  , module Telegram.Bot.DSL.Classes.HasTaggedContext
-  , module Telegram.Bot.DSL.Classes.IsCallbackData
-  , module Telegram.Bot.DSL.Classes.IsUnit
-  , module Telegram.Bot.DSL.Components.Button
-  , module Telegram.Bot.DSL.Components.ButtonLine
-  , module Telegram.Bot.DSL.Components.FmtText
-  , module Telegram.Bot.DSL.Components.Message
-  , module Telegram.Bot.DSL.Components.MessageLine
-  , module Telegram.Bot.DSL.Components.TextLine
-  , module Telegram.Bot.DSL.Conversions.AsMessage
-  , module Telegram.Bot.DSL.Conversions.AsMessageLine
-  , module Telegram.Bot.DSL.Conversions.AsTextLine
-  , module Telegram.Bot.DSL.Message
-  , module Telegram.Bot.DSL.Parsing
-  , module Telegram.Bot.DSL.TaggedContext
-  , module Telegram.Bot.DSL.Utils.RenameTag
+  , module Exports
   ) where
 
 import Data.Proxy (Proxy (..))
 
-import Telegram.Bot.DSL.Classes.HasTaggedContext
-import Telegram.Bot.DSL.Classes.IsCallbackData
-import Telegram.Bot.DSL.Classes.IsUnit
-import Telegram.Bot.DSL.Components.Button
-import Telegram.Bot.DSL.Components.ButtonLine
-import Telegram.Bot.DSL.Components.FmtText
-import Telegram.Bot.DSL.Components.Message
-import Telegram.Bot.DSL.Components.MessageLine
-import Telegram.Bot.DSL.Components.TextLine
-import Telegram.Bot.DSL.Conversions.AsMessage
-import Telegram.Bot.DSL.Conversions.AsMessageLine
-import Telegram.Bot.DSL.Conversions.AsTextLine
-import Telegram.Bot.DSL.Parsing
-import Telegram.Bot.DSL.Message
-import Telegram.Bot.DSL.TaggedContext
-import Telegram.Bot.DSL.Utils.RenameTag
+import Telegram.Bot.DSL.Classes.HasTaggedContext as Exports
+import Telegram.Bot.DSL.Classes.IsCallbackData as Exports
+import Telegram.Bot.DSL.Classes.IsUnit as Exports
+import Telegram.Bot.DSL.Components.Button as Exports
+import Telegram.Bot.DSL.Components.ButtonLine as Exports
+import Telegram.Bot.DSL.Components.FmtText as Exports
+import Telegram.Bot.DSL.Components.Message as Exports
+import Telegram.Bot.DSL.Components.MessageLine as Exports
+import Telegram.Bot.DSL.Components.TextLine as Exports
+import Telegram.Bot.DSL.Conversions.AsMessage as Exports
+import Telegram.Bot.DSL.Conversions.AsMessageLine as Exports
+import Telegram.Bot.DSL.Conversions.AsTextLine as Exports
+import Telegram.Bot.DSL.Parsing as Exports
+import Telegram.Bot.DSL.Message as Exports
+import Telegram.Bot.DSL.TaggedContext as Exports
+import Telegram.Bot.DSL.Utils.RenameTag as Exports
 
 type Proper :: k -> ProperMessageKind
 type Proper x = Proper' (AsMessage x)
