@@ -23,5 +23,5 @@ cabal.project.local
 .HTF/
 TAGS
 
-# Emacs backup files
-*~
+# Nix results
+result
