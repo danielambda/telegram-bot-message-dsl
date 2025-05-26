@@ -1,0 +1,1 @@
+This repo contains tons of type level machinery (too much, actually), but it was decided that simple value level message manipulations are easier, simpler, make more sence and are better in any other way than type level messages. Therefore the archiving of this repo   
